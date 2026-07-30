@@ -145,7 +145,7 @@ export const request = (method, path) => {
     const ac = new AbortController();
     const req = {
         signal: ac.signal,
-        credential: 'include',
+        credentials: 'include',
         headers: new Headers(defaultJSON),
         method: String(method).toUpperCase(),
     };
@@ -336,7 +336,14 @@ export const request = (method, path) => {
                     }));
                 }
 
-                return res.json().then((json) => {
+                return res.text().then((body) => {
+                    let json;
+                    try {
+                        json = JSON.parse(body);
+                    } catch {
+                        throw new Error(`API ${res.status} at ${res.url} returned a non-JSON response`);
+                    }
+
                     if (json.error) {
                         const msg = json.error.at(0);
                         const isErrServer = res.status >= HTTP_STATUS_INTERNAL_SERVER_ERROR;

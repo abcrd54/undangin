@@ -27,6 +27,12 @@ function loadEnv() {
 
 const env = loadEnv();
 
+for (const key of ['SUPABASE_URL', 'SUPABASE_KEY', 'JWT_SECRET', 'APP_KEY']) {
+    if (!env[key]) {
+        throw new Error(`Missing required environment variable: ${key}`);
+    }
+}
+
 const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_KEY, {
     auth: { persistSession: false, autoRefreshToken: false },
 });
