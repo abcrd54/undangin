@@ -326,7 +326,8 @@ export const request = (method, path) => {
                 Object.keys(defaultJSON).forEach((k) => req.headers.delete(k));
             }
 
-            return baseFetch(new URL(path, document.body.getAttribute('data-url'))).then((res) => {
+            const baseUrl = new URL(document.body.getAttribute('data-url') || '/', window.location.href);
+            return baseFetch(new URL(path, baseUrl)).then((res) => {
                 if (downName && res.ok) {
                     return baseDownload(res).then((r) => ({
                         code: r.status,

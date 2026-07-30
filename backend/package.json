@@ -8,11 +8,9 @@
         "seed": "node seed.js"
     },
     "dependencies": {
-        "bcryptjs": "^2.4.3",
         "@supabase/supabase-js": "^2.49.0",
-        "cors": "^2.8.5",
+        "bcryptjs": "^2.4.3",
         "express": "^4.21.0",
-        "jsonwebtoken": "^9.0.2",
-        "uuid": "^10.0.0"
+        "jsonwebtoken": "^9.0.2"
     }
 }
