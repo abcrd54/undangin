@@ -279,7 +279,6 @@ export const guest = (() => {
      * @returns {object}
      */
     const loaderLibs = () => {
-        progress.add();
 
         /**
          * @param {{aos: boolean, confetti: boolean}} opt
@@ -287,8 +286,8 @@ export const guest = (() => {
          */
         const load = (opt) => {
             loader(opt)
-                .then(() => progress.complete('libs'))
-                .catch(() => progress.invalid('libs'));
+                .then(() => {})
+                .catch(() => {});
         };
 
         return {
