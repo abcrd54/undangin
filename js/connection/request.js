@@ -145,7 +145,7 @@ export const request = (method, path) => {
     const ac = new AbortController();
     const req = {
         signal: ac.signal,
-        credentials: 'include',
+        credentials: 'same-origin',
         headers: new Headers(defaultJSON),
         method: String(method).toUpperCase(),
     };
@@ -451,7 +451,6 @@ export const request = (method, path) => {
          */
         default(header = null) {
             req.headers = new Headers(header ?? {});
-            req.credentials = 'same-origin';
             return baseFetch(path).then((res) => downName ? baseDownload(res) : Promise.resolve(res));
         },
         /**
