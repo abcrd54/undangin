@@ -1,29 +1,20 @@
-import { progress } from './progress.js';
 import { util } from '../../common/util.js';
 import { cache } from '../../connection/cache.js';
 import { HTTP_GET, request, HTTP_STATUS_OK, HTTP_STATUS_PARTIAL_CONTENT } from '../../connection/request.js';
 
 export const video = (() => {
 
-    /**
-     * @type {ReturnType<typeof cache>|null}
-     */
     let c = null;
 
-    /**
-     * @returns {Promise<void>}
-     */
     const load = () => {
         const wrap = document.getElementById('video-love-stroy');
         if (!wrap || !wrap.hasAttribute('data-src')) {
             wrap?.remove();
-            progress.complete('video', true);
             return Promise.resolve();
         }
 
         const src = wrap.getAttribute('data-src');
         if (!src) {
-            progress.complete('video', true);
             return Promise.resolve();
         }
 
@@ -38,10 +29,6 @@ export const video = (() => {
 
         const observer = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting ? vid.play() : vid.pause()));
 
-        /**
-         * @param {Blob} b
-         * @returns {void}
-         */
         const prepareVideo = (b) => {
             vid.preload = 'auto';
             vid.controls = true;
@@ -51,9 +38,6 @@ export const video = (() => {
             vid.src = URL.createObjectURL(b);
         };
 
-        /**
-         * @returns {Promise<Response>}
-         */
         const fetchBasic = () => {
             const bar = document.getElementById('progress-bar-video-love-stroy');
             const inf = document.getElementById('progress-info-video-love-stroy');
@@ -64,7 +48,6 @@ export const video = (() => {
                     vid.preload = 'none';
                     vid.src = util.escapeHtml(src);
                     wrap.appendChild(vid);
-
                     return Promise.resolve();
                 }
 
@@ -72,7 +55,6 @@ export const video = (() => {
                     throw new Error('failed to fetch video');
                 }
 
-                vid.addEventListener('error', () => progress.invalid('video'));
                 const loaded = new Promise((r) => vid.addEventListener('loadedmetadata', r, { once: true }));
 
                 vid.src = util.escapeHtml(src);
@@ -82,7 +64,6 @@ export const video = (() => {
             }).then(() => {
                 vid.pause();
                 vid.currentTime = 0;
-                progress.complete('video');
 
                 const height = vid.getBoundingClientRect().width * (vid.videoHeight / vid.videoWidth);
                 vid.style.height = `${height}px`;
@@ -90,7 +71,6 @@ export const video = (() => {
 
                 return request(HTTP_GET, src).withRetry().withProgressFunc((a, b) => {
                     const result = Number((a / b) * 100).toFixed(0) + '%';
-
                     bar.style.width = result;
                     inf.innerText = result;
                 }).default();
@@ -101,7 +81,7 @@ export const video = (() => {
                 return loaded.then(() => res);
             })).catch((err) => {
                 bar.style.backgroundColor = 'red';
-                inf.innerText = `Error loading video`;
+                inf.innerText = 'Error loading video';
                 console.error(err);
             });
         };
@@ -115,7 +95,7 @@ export const video = (() => {
                 const loaded = new Promise((r) => vid.addEventListener('loadedmetadata', r, { once: true }));
                 prepareVideo(b);
                 wrap.appendChild(vid);
-                return loaded.then(() => progress.complete('video'));
+                return loaded;
             });
         }).then(() => {
             observer.observe(vid);
@@ -125,11 +105,7 @@ export const video = (() => {
         });
     };
 
-    /**
-     * @returns {object}
-     */
     const init = () => {
-        progress.add();
         c = cache('video').withForceCache();
 
         return {
