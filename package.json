@@ -18,7 +18,7 @@
         "lint:html": "htmlhint **/*.html",
         "dev": "npx concurrently -n bundle,server -c cyan,green \"npx esbuild js/*.js --bundle --outdir=dist --watch\" \"node --watch backend/server.js\"",
         "build": "npx esbuild js/*.js --bundle --minify --outdir=dist",
-        "build:public": "npm run build && node -e \"import('fs-extra').then(({default: fs}) => fs.emptyDir('public').then(() => Promise.all(['assets', 'css', 'dist', 'index.html', 'dashboard.html'].map((f) => fs.copy(f, 'public/' + f)))).then(() => console.log('Build complete')));\"",
+        "build:public": "npm run build && node -e \"import('fs-extra').then(({default: fs}) => fs.emptyDir('public').then(() => Promise.all(['assets', 'css', 'dist', 'api', 'index.html', 'dashboard.html'].map((f) => fs.copy(f, 'public/' + f)))).then(() => console.log('Build complete')));\"",
         "seed": "node backend/seed.js",
         "start": "node backend/server.js"
     },
