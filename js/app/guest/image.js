@@ -24,8 +24,9 @@ export const image = (() => {
      */
     const loadedImage = (src) => new Promise((res, rej) => {
         const i = new Image();
+        i.crossOrigin = 'anonymous';
         i.onload = () => res(i);
-        i.onerror = rej;
+        i.onerror = () => rej(new Error('Failed to load image'));
         i.src = src;
     });
 
@@ -42,6 +43,9 @@ export const image = (() => {
         img.remove();
 
         progress.complete('image');
+    }).catch((err) => {
+        console.error('Image load error:', err);
+        progress.invalid('image');
     });
 
     /**

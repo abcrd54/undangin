@@ -65,16 +65,12 @@ export const cache = (cacheName) => {
          */
         const fetchPut = () => request(HTTP_GET, input).withCancel(cancel).withRetry().default();
 
-        const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error('Request timeout')), 10000));
-
-        const inflightPromise = Promise.race([
-            has(input)
-                .then((res) => res ? Promise.resolve(res) : del(input).then(fetchPut).then((r) => set(input, r)))
-                .then((r) => r.blob())
-                .then((b) => objectUrls.set(input, URL.createObjectURL(b)))
-                .then(() => objectUrls.get(input)),
-            timeout,
-        ]).finally(() => inFlightRequests.delete(input));
+        const inflightPromise = has(input)
+            .then((res) => res ? Promise.resolve(res) : del(input).then(fetchPut).then((r) => set(input, r)))
+            .then((r) => r.blob())
+            .then((b) => objectUrls.set(input, URL.createObjectURL(b)))
+            .then(() => objectUrls.get(input))
+            .finally(() => inFlightRequests.delete(input));
 
         inFlightRequests.set(input, inflightPromise);
         return inflightPromise;
