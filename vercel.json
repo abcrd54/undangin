@@ -1,12 +1,4 @@
 {
     "buildCommand": "npm run build:public",
-    "builds": [
-        { "src": "api/[...path].js", "use": "@vercel/node" },
-        { "src": "public/**", "use": "@vercel/static" }
-    ],
-    "routes": [
-        { "src": "/api/(.*)", "dest": "/api/[...path]" },
-        { "handle": "filesystem" },
-        { "src": "/(.*)", "dest": "/public/$1" }
-    ]
+    "outputDirectory": "public"
 }
