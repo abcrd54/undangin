@@ -12,6 +12,16 @@ export const image = (() => {
      * @returns {void}
      */
     const setupImage = (el) => {
+        if (el.hasAttribute('data-src')) {
+            el.onload = () => {
+                el.classList.remove('opacity-0');
+                progress.complete('image');
+            };
+            el.onerror = () => progress.invalid('image');
+            el.src = el.getAttribute('data-src');
+            return;
+        }
+
         if (el.complete && el.naturalWidth !== 0 && el.naturalHeight !== 0) {
             progress.complete('image');
             return;
@@ -27,10 +37,6 @@ export const image = (() => {
             progress.complete('image');
         };
         el.onerror = () => progress.invalid('image');
-
-        if (el.hasAttribute('data-src')) {
-            el.src = el.getAttribute('data-src');
-        }
     };
 
     /**
